@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "420210220843",
+    "project_id": "upnews-1357f",
+    "storage_bucket": "upnews-1357f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:420210220843:android:620edd4deaf3da8a68af6e",
+        "android_client_info": {
+          "package_name": "com.example.upnews"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0ZnL7bKex0-PKXjoOfoWn5ruOk7Xaoq0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
