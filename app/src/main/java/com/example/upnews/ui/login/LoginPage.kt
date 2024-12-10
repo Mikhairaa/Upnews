@@ -1,33 +1,47 @@
 package com.example.upnews.ui.login
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.upnews.ui.AuthViewModel
 import com.example.upnews.R
+import com.example.upnews.data.local.UserPreferences
+import com.example.upnews.ui.ViewModelFactory
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginPage(modifier: Modifier = Modifier, navController: NavHostController, authViewModel: AuthViewModel) {
+fun LoginPage(
+    modifier: Modifier = Modifier,
+    navController: NavHostController,
+    loginViewModel:LoginViewModel= viewModel(factory = ViewModelFactory(UserPreferences.getInstance(LocalContext.current)))
+) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
+    val loginResult by loginViewModel.loginResult.observeAsState()
+    val isLoading by loginViewModel.isLoading.observeAsState(false)
 
     Column(modifier = Modifier
             .fillMaxSize()
@@ -85,6 +99,7 @@ fun LoginPage(modifier: Modifier = Modifier, navController: NavHostController, a
                 modifier = Modifier.fillMaxWidth())
                    },
             visualTransformation = PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 focusedBorderColor = Color.Gray,               // Warna garis batas saat difokuskan
                 unfocusedBorderColor = Color.Gray,             // Warna garis batas saat tidak difokuskan
@@ -119,14 +134,15 @@ fun LoginPage(modifier: Modifier = Modifier, navController: NavHostController, a
 // Sign Up Button
         Button(
             colors = ButtonDefaults.buttonColors(colorResource(id = R.color.merah)),
-            onClick = { navController.navigate("upload")},
+            onClick = {
+                loginViewModel.login(email, password) },
             shape = MaterialTheme.shapes.small,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),
         ) {
             Text(
-                text = stringResource(id = R.string.sign_in_label),
+                text = if (isLoading) "Loading..." else "Sign In",
                 color = Color.White,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 16.sp
@@ -144,17 +160,25 @@ fun LoginPage(modifier: Modifier = Modifier, navController: NavHostController, a
                 fontSize = 12.sp)
         }
     }
+    // Observasi hasil login
+    loginResult?.let { result ->
+        result.onSuccess {
+            // Arahkan ke halaman Home
+            navController.navigate("upload") {
+                popUpTo("login") { inclusive = true }
+            }
+        }
+        result.onFailure { exception ->
+            // Tampilkan pesan kesalahan
+            Toast.makeText(LocalContext.current, exception.message, Toast.LENGTH_SHORT).show()
+        }
+    }
 }
 
-@Preview(showBackground = true)
+
+
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun LoginPagePreview() {
-    val mockNavController = rememberNavController() // Mock NavController for preview
-    val mockAuthViewModel = AuthViewModel() // Instantiate a mock AuthViewModel if possible
-
-    LoginPage(
-        modifier = Modifier,
-        navController = mockNavController,
-        authViewModel = mockAuthViewModel
-    )
+    LoginPage(navController = NavHostController(LocalContext.current))
 }

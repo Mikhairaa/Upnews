@@ -20,7 +20,7 @@ fun MyAppNavigation(modifier: Modifier = Modifier, authViewModel: AuthViewModel)
             })
         }
         composable("login") {
-            LoginPage(modifier,navController,authViewModel)
+            LoginPage(modifier,navController)
         }
         composable("signup") {
             SignupPage(modifier,navController,authViewModel)

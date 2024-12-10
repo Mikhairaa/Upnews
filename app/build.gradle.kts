@@ -76,8 +76,14 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     annotationProcessor(libs.androidx.room.compiler)
 
+    implementation(libs.glide)
+    implementation (libs.androidx.navigation.compose)
+
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
+
+    implementation(libs.androidx.datastore)
+    implementation(libs.androidx.datastore.preferences)
 
     implementation(libs.okhttp)
     implementation(libs.logging.interceptor)
