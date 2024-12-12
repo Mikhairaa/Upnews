@@ -20,13 +20,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.app.view.upload.DraftPage
 import com.example.app.view.upload.FormPage
 import com.example.upnews.R
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun UploadPage() {
+fun UploadPage(
+    modifier: Modifier = Modifier,
+    navController: NavHostController
+) {
     var selectedTabIndex by remember { mutableStateOf(0) }
 
     Scaffold(
@@ -111,14 +115,14 @@ fun UploadPage() {
         }
     ) {
         when (selectedTabIndex) {
-            0 -> FormPage()
-            1 -> DraftPage()
+            0 -> FormPage(modifier = modifier, navController = navController)
+            1 -> DraftPage(modifier = modifier, navController = navController)
         }
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun PreviewUploadScreen() {
-    UploadPage()
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun PreviewUploadScreen() {
+//    UploadPage()
+//}

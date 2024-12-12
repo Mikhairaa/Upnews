@@ -1,8 +1,10 @@
 package com.example.upnews.data.retrofit
 
 import com.example.upnews.data.response.BeritaResponse
+import com.example.upnews.data.response.GetDraftResponse
 import com.example.upnews.data.response.HomepageResponse
 import com.example.upnews.data.response.LoginResponse
+import com.example.upnews.data.response.RegisterResponse
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
@@ -18,15 +20,27 @@ interface ApiService {
         @Field("password") password: String
     ): LoginResponse
 
+    @FormUrlEncoded
+    @POST("user/")
+    suspend fun register(
+        @Field("nama") nama: String,
+        @Field("email") email: String,
+        @Field("alamat") alamat: String,
+        @Field("password") password: String
+    ): RegisterResponse
+
+    @GET("berita/draft")
+    suspend fun getDraftBerita(@Header("Authorization") token: String): GetDraftResponse
+
     @GET("berita/done")
-    suspend fun getBerita(): BeritaResponse
+    suspend fun getBerita(@Header("Authorization") token: String): BeritaResponse
 
     @GET("berita/proses")
     suspend fun getBeritaProses(@Header("Authorization") token: String): BeritaResponse
 
 
-    @GET("berita/homepage")
-    suspend fun getBeritaHomepage(@Header("Authorization") token: String): HomepageResponse
+    @GET("user/homepage")
+    suspend fun getBeritaHomepage(): HomepageResponse
 
 
 //    @PATCH

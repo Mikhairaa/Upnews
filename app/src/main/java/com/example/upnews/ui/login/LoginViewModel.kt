@@ -19,6 +19,10 @@ class LoginViewModel(private val userPreferences: UserPreferences): ViewModel() 
     val isLoading: LiveData<Boolean> = _isLoading
 
     fun login(email: String, password: String) {
+        if (email.isBlank() || password.isBlank()) {
+            _loginResult.postValue(Result.failure(Exception("Email dan password wajib diisi.")))
+            return
+        }
         _isLoading.value = true
         viewModelScope.launch {
             try {
@@ -31,10 +35,19 @@ class LoginViewModel(private val userPreferences: UserPreferences): ViewModel() 
                         _loginResult.postValue(Result.success(response))
                     } ?: throw Exception("Token not found in responses")
                 } ?: throw Exception("User not found in response")
-            }catch (e: Exception) {
-                _loginResult.postValue(Result.failure(e))
-                Log.e("Loginerror", e.message ?: "Unknown error")
-            }finally {
+            }catch (e: retrofit2.HttpException) {
+                // Tangani kesalahan berdasarkan status kode HTTP
+                when (e.code()) {
+                    400 -> _loginResult.postValue(Result.failure(Exception("Email atau password salah.")))
+                    401 -> _loginResult.postValue(Result.failure(Exception("Unauthorized: Email atau password salah.")))
+                    else -> _loginResult.postValue(Result.failure(Exception("Kesalahan jaringan atau server: ${e.message}")))
+                }
+                Log.e("LoginHttpError", "HTTP ${e.code()}: ${e.message}")
+            } catch (e: Exception) {
+                // Tangani kesalahan umum lainnya
+                _loginResult.postValue(Result.failure(Exception("Terjadi kesalahan: ${e.message}")))
+                Log.e("LoginError", e.message ?: "Unknown error")
+            } finally {
                 _isLoading.postValue(false)
             }
         }

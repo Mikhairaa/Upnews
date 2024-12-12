@@ -8,9 +8,13 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.example.upnews.data.response.RegisterResponse
 import com.example.upnews.data.response.User
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.first
+
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "session")
 
@@ -21,8 +25,19 @@ class UserPreferences private constructor(private val dataStore: DataStore<Prefe
     private val USER_NAME = stringPreferencesKey("user_name")
     private val USER_EMAIL = stringPreferencesKey("user_email")
     private val USER_ID = stringPreferencesKey("user_id")
+    private val USER_ADDRESS = stringPreferencesKey("user_address")
 
+    suspend fun saveToken(token: String) {
+        dataStore.edit { preferences ->
+            preferences[ACCESS_TOKEN] = token
+        }
+        Log.d("UserPreferences", "Token saved: $token")
+    }
 
+    fun getToken(): Flow<String?> {
+        return dataStore.data
+            .map { preferences -> preferences[ACCESS_TOKEN] }
+    }
     suspend fun saveUser(user: User) {
         dataStore.edit { preferences ->
             preferences[IS_LOGGED_IN] = true
@@ -33,6 +48,39 @@ class UserPreferences private constructor(private val dataStore: DataStore<Prefe
         }
         Log.d("UserPreferences", "User data saved: $user")
     }
+
+    suspend fun saveRegisterResponse(registerResponse: RegisterResponse) {
+        dataStore.edit { preferences ->
+            preferences[USER_EMAIL] = registerResponse.email ?: ""
+            preferences[USER_ID] = registerResponse.id?.toString() ?: ""
+            preferences[USER_ADDRESS] = registerResponse.alamat ?: ""
+            preferences[USER_NAME] = registerResponse.nama ?: ""
+        }
+        Log.d("saveRegisterResponse", "Register response saved: $registerResponse")
+    }
+
+
+//    fun getUser(): Flow<User?> {
+//        return dataStore.data.map { preferences ->
+//            val name = preferences[USER_NAME]
+//            val email = preferences[USER_EMAIL]
+//            val id = preferences[USER_ID]?.toIntOrNull()
+//            val token = preferences[ACCESS_TOKEN]
+//            val alamat = preferences[USER_ADDRESS]
+//
+//            if (name != null && email != null && token != null && alamat != null) {
+//                User(
+//                    name = name,
+//                    id = id,
+//                    email = email,
+//                    token = token,
+//                    alamat = alamat
+//                )
+//            } else {
+//                null
+//            }
+//        }
+//    }
 
     suspend fun saveIsUserLoggedIn(isLoggedIn: Boolean) {
         dataStore.edit { preferences ->
@@ -55,30 +103,6 @@ class UserPreferences private constructor(private val dataStore: DataStore<Prefe
             preferences[USER_ID] = ""
         }
         Log.d("UserPreferences", "User logged out")
-    }
-    suspend fun saveToken(token: String) {
-        dataStore.edit { preferences ->
-            preferences[ACCESS_TOKEN] = token
-        }
-    }
-
-    fun getToken(): Flow<String?> {
-        return dataStore.data
-            .map { preferences -> preferences[ACCESS_TOKEN] }
-    }
-    fun getUser(): Flow<User?> {
-        return dataStore.data.map { preferences ->
-            val name = preferences[USER_NAME]
-            val email = preferences[USER_EMAIL]
-            val id = preferences[USER_ID]?.toIntOrNull()
-            val token = preferences[ACCESS_TOKEN]
-
-            if (name != null && email != null && token != null) {
-                User(name = name, email = email, id = id, token = token)
-            } else {
-                null
-            }
-        }
     }
 
     companion object {
