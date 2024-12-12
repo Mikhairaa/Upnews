@@ -44,4 +44,6 @@
     <string name="bank_account_number_label">Bank account number\n</string>
     <string name="send_label">Send</string>
     <string name="simpan_label">Save</string>
+    <string name="hapus_label">Hapus\n</string>
+    <string name="edit_label">Edit</string>
 </resources>

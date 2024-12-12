@@ -1,5 +1,6 @@
 package com.example.app.view.upload
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -29,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -38,11 +40,15 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.upnews.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FormPage() {
+fun FormPage(
+    modifier: Modifier = Modifier,
+    navController: NavHostController
+) {
     var judul by remember { mutableStateOf("") }
     var tanggal by remember { mutableStateOf("") }
     var waktu by remember { mutableStateOf("") }
@@ -57,6 +63,8 @@ fun FormPage() {
     var selectedBank by remember { mutableStateOf("")}
     var accountNumber by remember { mutableStateOf("") }
     var isConfirmed by remember { mutableStateOf(false) }
+    BackHandler { navController.popBackStack() }
+    val context = LocalContext.current
 
     // Tambahkan Scroll State
     val scrollState = rememberScrollState()
@@ -72,17 +80,17 @@ fun FormPage() {
             text = stringResource(id = R.string.form_tittle),
             style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold)
         )
-        Spacer(modifier = Modifier.height(15.dp))
+        Spacer(modifier = Modifier.height(5.dp))
 
         Text(
             text = stringResource(id = R.string.sub_tittle_label),
             style = TextStyle(fontSize = 15.sp, fontWeight = FontWeight.Normal)
         )
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
         Text(
             text = stringResource(id = R.string.tittle_label),
-            modifier = Modifier.height(25.dp),
+            modifier = Modifier.height(15.dp),
             style = TextStyle(fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
         )
         // judul Input
@@ -107,12 +115,13 @@ fun FormPage() {
             ),
             modifier = Modifier
                 .fillMaxWidth()
+                .height(60.dp)
         )
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
         Text(
             text = stringResource(id = R.string.date_label),
-            modifier = Modifier.height(25.dp),
+            modifier = Modifier.height(15.dp),
             style = TextStyle(fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
         )
 
@@ -138,11 +147,11 @@ fun FormPage() {
             modifier = Modifier
                 .fillMaxWidth()
         )
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
         Text(
             text = stringResource(id = R.string.time_label),
-            modifier = Modifier.height(25.dp),
+            modifier = Modifier.height(15.dp),
             style = TextStyle(fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
         )
         // Password Input
@@ -165,11 +174,11 @@ fun FormPage() {
             modifier = Modifier
                 .fillMaxWidth()
         )
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
         Text(
             text = stringResource(id = R.string.lokasi_label),
-            modifier = Modifier.height(25.dp),
+            modifier = Modifier.height(15.dp),
             style = TextStyle(fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
         )
 
@@ -193,11 +202,11 @@ fun FormPage() {
             modifier = Modifier
                 .fillMaxWidth()
         )
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
         Text(
             text = stringResource(id = R.string.news_description_label),
-            modifier = Modifier.height(25.dp),
+            modifier = Modifier.height(15.dp),
             style = TextStyle(fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
         )
 
@@ -221,12 +230,12 @@ fun FormPage() {
                 .height(150.dp)
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
 // Add Photo/Video
         Text(
             text = stringResource(id = R.string.add_photo_video_label),
-            modifier = Modifier.height(25.dp),
+            modifier = Modifier.height(15.dp),
             style = TextStyle(fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
         )
 
@@ -288,13 +297,13 @@ fun FormPage() {
             text = stringResource(id = R.string.personal_data_lable),
             style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold)
         )
-        Spacer(modifier = Modifier.height(15.dp))
+        Spacer(modifier = Modifier.height(5.dp))
 
         Text(
             text = stringResource(id = R.string.sub_personal_data_label),
             style = TextStyle(fontSize = 15.sp, fontWeight = FontWeight.Normal)
         )
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
         Text(
             text = stringResource(id = R.string.phone_number_label),
@@ -322,27 +331,28 @@ fun FormPage() {
             modifier = Modifier
                 .fillMaxWidth()
         )
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
         Text(
             text = stringResource(id = R.string.bank_account_label),
-            modifier = Modifier.height(25.dp),
+            modifier = Modifier.height(15.dp),
             style = TextStyle(fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         // drop down menu bank
         ExposedDropdownMenuBox(
                 expanded = isExpanded,
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    . height(60.dp),
                 onExpandedChange = {isExpanded = !isExpanded}
             ) {
                 OutlinedTextField(
                     modifier = Modifier
                         .menuAnchor()
                         .fillMaxWidth()
-                        .height(50.dp),
+                        .height(60.dp),
                     value = selectedBank, onValueChange = {},
                     label = {
                         Text(
@@ -374,7 +384,7 @@ fun FormPage() {
                     }
                 }
             }
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         // Input untuk nomor rekening
         OutlinedTextField(
             value = no_rek,
@@ -396,13 +406,14 @@ fun FormPage() {
             ),
             modifier = Modifier
                 .fillMaxWidth()
-                .height(50.dp)
+                .height(60.dp)
         )
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(5.dp))
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
         ) {
             Checkbox(
                 checked = isConfirmed,
@@ -417,7 +428,7 @@ fun FormPage() {
                 modifier = Modifier.weight(1f)
             )
         }
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(10 .dp))
 // Create Button
         Row(
             modifier = Modifier
@@ -434,7 +445,7 @@ fun FormPage() {
                 shape = MaterialTheme.shapes.small,
                 modifier = Modifier
                     .weight(1f) // Membagi ruang secara proporsional
-                    .height(50.dp)
+                    .height(40.dp)
                     .border(
                         BorderStroke(1.dp, colorResource(id = R.color.merah)),
                         shape = MaterialTheme.shapes.small
@@ -459,7 +470,7 @@ fun FormPage() {
                 shape = MaterialTheme.shapes.small,
                 modifier = Modifier
                     .weight(1f) // Membagi ruang secara proporsional
-                    .height(50.dp)
+                    .height(40.dp)
             ) {
                 Text(
                     text = stringResource(id = R.string.send_label),
@@ -468,6 +479,7 @@ fun FormPage() {
                     fontSize = 16.sp
                 )
             }
+            Spacer(modifier = Modifier.height(8.dp))
         }
 
         }
@@ -491,8 +503,8 @@ fun TextFieldWithLabel(label: String, hint: String, isMultiline: Boolean = false
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun PreviewFormScreen() {
-    FormPage()
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun PreviewFormScreen() {
+//    FormPage(navController = NavHostController)
+//}

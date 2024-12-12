@@ -1,6 +1,7 @@
 package com.example.upnews.ui.login
 
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -24,7 +25,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.upnews.ui.AuthViewModel
 import com.example.upnews.R
 import com.example.upnews.data.local.UserPreferences
 import com.example.upnews.ui.ViewModelFactory
@@ -42,6 +42,7 @@ fun LoginPage(
     var passwordVisible by remember { mutableStateOf(false) }
     val loginResult by loginViewModel.loginResult.observeAsState()
     val isLoading by loginViewModel.isLoading.observeAsState(false)
+    BackHandler { navController.popBackStack() }
 
     Column(modifier = Modifier
             .fillMaxSize()
@@ -131,7 +132,7 @@ fun LoginPage(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-// Sign Up Button
+// Sign In   Button
         Button(
             colors = ButtonDefaults.buttonColors(colorResource(id = R.color.merah)),
             onClick = {
@@ -162,15 +163,25 @@ fun LoginPage(
     }
     // Observasi hasil login
     loginResult?.let { result ->
-        result.onSuccess {
-            // Arahkan ke halaman Home
-            navController.navigate("upload") {
-                popUpTo("login") { inclusive = true }
+        if (email.isBlank() || password.isBlank()) {
+            Toast.makeText(LocalContext.current, "Email dan password wajib diisi.", Toast.LENGTH_SHORT).show()
+        } else {
+            result.onSuccess {
+                // Arahkan ke halaman Home jika login berhasil
+                navController.navigate("upload") {
+                    popUpTo("login") { inclusive = true }
+                }
             }
-        }
-        result.onFailure { exception ->
-            // Tampilkan pesan kesalahan
-            Toast.makeText(LocalContext.current, exception.message, Toast.LENGTH_SHORT).show()
+            result.onFailure { exception ->
+                // Periksa pesan kesalahan spesifik
+                val errorMessage = exception.message ?: "Terjadi kesalahan"
+                if (errorMessage.contains("Incorrect email or password", true)) {
+                    Toast.makeText(LocalContext.current, "Email atau password salah.", Toast.LENGTH_SHORT).show()
+                } else {
+                    // Tampilkan pesan kesalahan umum
+                    Toast.makeText(LocalContext.current, errorMessage, Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 }

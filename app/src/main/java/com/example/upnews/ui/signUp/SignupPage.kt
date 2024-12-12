@@ -1,5 +1,7 @@
 package com.example.upnews.ui.signUp
 
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -18,6 +20,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -35,20 +38,34 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.upnews.ui.AuthViewModel
 import com.example.upnews.R
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.upnews.data.local.UserPreferences
+import com.example.upnews.data.response.RegisterResponse
+import com.example.upnews.ui.ViewModelFactory
+import com.example.upnews.ui.login.LoginViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SignupPage(modifier: Modifier = Modifier, navController: NavHostController, authViewModel: AuthViewModel) {
+fun SignupPage(
+    modifier: Modifier = Modifier,
+    navController: NavHostController,
+    signUpViewModel: SignUpViewModel = viewModel(factory = ViewModelFactory(UserPreferences.getInstance(LocalContext.current)))
+) {
     var nama by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var alamat by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var fotoProfil by remember { mutableStateOf(false) }
+    val registerResult by signUpViewModel.registerResult.observeAsState()
+//    var fotoProfil by remember { mutableStateOf(false) }
+    val isLoading by signUpViewModel.isLoading.observeAsState(false)
+    BackHandler { navController.popBackStack() }
     val context = LocalContext.current
+
+
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -76,12 +93,12 @@ fun SignupPage(modifier: Modifier = Modifier, navController: NavHostController, 
         )
         Spacer(modifier = Modifier.height(20.dp))
 
-        // Name Input
-        OutlinedTextField(value = nama, onValueChange = {
-            nama = it
+        // Email Input
+        OutlinedTextField(value = email, onValueChange = {
+            email = it
         }, label = {
             Text(
-                text = stringResource(id = R.string.name_label),
+                text = stringResource(id = R.string.email_label),
                 color = Color.Gray,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -96,12 +113,12 @@ fun SignupPage(modifier: Modifier = Modifier, navController: NavHostController, 
         )
         Spacer(modifier = Modifier.height(15.dp))
 
-        // Email Input
-        OutlinedTextField(value = email, onValueChange = {
-            email = it
+        // Name Input
+        OutlinedTextField(value = nama, onValueChange = {
+            nama = it
         }, label = {
             Text(
-                text = stringResource(id = R.string.email_label),
+                text = stringResource(id = R.string.name_label),
                 color = Color.Gray,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -161,6 +178,7 @@ fun SignupPage(modifier: Modifier = Modifier, navController: NavHostController, 
         Button(
             colors = ButtonDefaults.buttonColors(colorResource(id = R.color.merah)),
             onClick = {
+                signUpViewModel.register(nama, email, alamat, password)
             },
             shape = MaterialTheme.shapes.small,
             modifier = Modifier
@@ -168,7 +186,7 @@ fun SignupPage(modifier: Modifier = Modifier, navController: NavHostController, 
                 .height(50.dp)
         ) {
             Text(
-                text = stringResource(id = R.string.create_account),
+                text = if(isLoading) "Loading..." else stringResource(id = R.string.create_account),
                 color = Color.White,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.padding(top = 8.dp),
@@ -187,18 +205,32 @@ fun SignupPage(modifier: Modifier = Modifier, navController: NavHostController, 
                 fontSize = 12.sp
             )
         }
+        registerResult?.let { result ->
+            result.onSuccess {
+                // Cek apakah data registrasi berhasil
+                if (it.email.isNullOrEmpty() || it.password.isNullOrEmpty()) {
+                    Toast.makeText(LocalContext.current, "Data tidak lengkap, pastikan semua kolom terisi.", Toast.LENGTH_SHORT).show()
+                } else {
+                    // Tampilkan pesan sukses jika semua data berhasil terkirim
+                    Toast.makeText(context, "Registrasi Berhasil", Toast.LENGTH_SHORT).show()
+                    navController.navigate("login") {
+                        popUpTo("login") { inclusive = true }
+                    }
+                }
+            }
+            result.onFailure { exception ->
+                // Tangani error
+                Toast.makeText(LocalContext.current, "Terjadi kesalahan: ${exception.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
-}
+    }
 
 
 @Preview(showBackground = true)
 @Composable
 fun SignupPagePreview() {
-    val mockNavController = rememberNavController() // Mock NavController for preview
-    val mockAuthViewModel = AuthViewModel() // Instantiate a mock AuthViewModel if possible
     SignupPage(
-        modifier = Modifier,
-        navController = mockNavController,
-        authViewModel = mockAuthViewModel
+        navController = NavHostController(LocalContext.current)
     )
 }
