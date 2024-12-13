@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 data class HomepageResponse(
 
 	@field:SerializedName("berita")
-	val berita: List<BeritaItem?>? = null,
+	val berita: List<BeritaHome?>? = null,
 
 	@field:SerializedName("message")
 	val message: String? = null,

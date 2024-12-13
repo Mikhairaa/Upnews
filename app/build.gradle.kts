@@ -51,6 +51,7 @@ android {
 }
 
 dependencies {
+    // Dependencies yang sudah ada
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -72,12 +73,13 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation("androidx.compose.material:material-icons-extended:1.7.5")
 
     implementation(libs.androidx.room.runtime)
     annotationProcessor(libs.androidx.room.compiler)
 
     implementation(libs.glide)
-    implementation (libs.androidx.navigation.compose)
+    implementation(libs.androidx.navigation.compose)
 
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
@@ -87,5 +89,9 @@ dependencies {
 
     implementation(libs.okhttp)
     implementation(libs.logging.interceptor)
-}
 
+    // Tambahan baru
+    implementation(libs.androidx.lifecycle.runtime.compose) // Lifecycle Compose
+    implementation(libs.androidx.runtime.livedata) // Runtime LiveData untuk Compose
+    implementation("androidx.compose.runtime:runtime:1.7.5") // Runtime utama Jetpack Compose
+}

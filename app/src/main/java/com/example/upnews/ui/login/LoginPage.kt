@@ -164,8 +164,8 @@ fun LoginPage(
     loginResult?.let { result ->
         result.onSuccess {
             // Arahkan ke halaman Home
-            navController.navigate("upload") {
-                popUpTo("login") { inclusive = true }
+            navController.navigate("home") {
+                popUpTo("home") { inclusive = true }
             }
         }
         result.onFailure { exception ->

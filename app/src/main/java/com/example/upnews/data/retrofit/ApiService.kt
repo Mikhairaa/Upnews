@@ -25,8 +25,10 @@ interface ApiService {
     suspend fun getBeritaProses(@Header("Authorization") token: String): BeritaResponse
 
 
-    @GET("berita/homepage")
-    suspend fun getBeritaHomepage(@Header("Authorization") token: String): HomepageResponse
+    @GET("user/homepage")
+    suspend fun getHomepageData(): HomepageResponse
+
+
 
 
 //    @PATCH
