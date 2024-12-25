@@ -13,6 +13,11 @@ import com.example.upnews.ui.screens.OnProgressScreen
 import com.example.upnews.ui.screens.UpdateProfileScreen
 import com.example.upnews.ui.screens.ProfileScreen
 import com.example.upnews.ui.screens.RejectedScreen
+import com.example.app.view.upload.DraftPage
+import com.example.app.view.upload.FormPage
+import com.example.upnews.ui.homepage.HomePage
+import com.example.upnews.ui.login.LoginPage
+import com.example.upnews.ui.signUp.SignupPage
 import kotlinx.coroutines.flow.Flow
 
 @Composable
@@ -21,8 +26,22 @@ fun MyAppNavigation(modifier: Modifier = Modifier, isUserLoggedIn: Flow<Boolean>
     val isUserLoggedIn = isUserLoggedIn.collectAsState(initial = false)
     val coroutineScope = rememberCoroutineScope()
 
-    NavHost(navController = navController, startDestination = if (isUserLoggedIn.value)"login" else "signup") {
-
+    NavHost(navController = navController, startDestination = if (isUserLoggedIn.value) "login" else "signup") {
+        composable("login") {
+            LoginPage(modifier,navController)
+        }
+        composable("signup") {
+            SignupPage(modifier,navController)
+        }
+        composable("home") {
+            HomePage(modifier,navController)
+        }
+        composable("form") {
+            FormPage(modifier,navController)
+        }
+        composable("draft") {
+            DraftPage(modifier,navController)
+        }
         composable("upload") {
             UploadPage(modifier,navController)
         }

@@ -1,4 +1,4 @@
-package com.example.upnews.ui.screens
+package com.example.upnews.ui.draft
 
 import android.util.Log
 import androidx.lifecycle.ViewModel

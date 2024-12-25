@@ -9,6 +9,11 @@ import com.example.upnews.ui.profile.UpdateProfilViewModel
 import com.example.upnews.ui.screens.DoneViewModel
 import com.example.upnews.ui.screens.OnProgressViewModel
 import com.example.upnews.ui.screens.RejectedViewModel
+import com.example.upnews.ui.draft.DraftViewModel
+import com.example.upnews.ui.homepage.HomeViewModel
+import com.example.upnews.ui.login.LoginViewModel
+import com.example.upnews.ui.signUp.SignUpViewModel
+import com.example.upnews.viewmodel.FormViewModel
 
 class ViewModelFactory(private val userPreferences: UserPreferences) : ViewModelProvider
 .NewInstanceFactory() {
