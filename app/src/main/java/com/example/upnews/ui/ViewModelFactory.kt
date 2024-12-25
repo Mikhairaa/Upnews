@@ -3,6 +3,7 @@ package com.example.upnews.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.upnews.data.local.UserPreferences
+import com.example.upnews.ui.forgotPw.ChangePasswordViewModel
 import com.example.upnews.ui.allnews.AllViewModel
 import com.example.upnews.ui.profile.ProfileViewModel
 import com.example.upnews.ui.profile.UpdateProfilViewModel
@@ -11,6 +12,7 @@ import com.example.upnews.ui.screens.OnProgressViewModel
 import com.example.upnews.ui.screens.RejectedViewModel
 import com.example.upnews.ui.draft.DraftViewModel
 import com.example.upnews.ui.homepage.HomeViewModel
+import com.example.upnews.ui.notifikasi.NotifikasiViewModel
 import com.example.upnews.ui.login.LoginViewModel
 import com.example.upnews.ui.signUp.SignUpViewModel
 import com.example.upnews.viewmodel.FormViewModel
@@ -40,7 +42,13 @@ class ViewModelFactory(private val userPreferences: UserPreferences) : ViewModel
             modelClass.isAssignableFrom(AllViewModel::class.java) -> {
                 AllViewModel(userPreferences) as T
             }
-            else -> throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
+            modelClass.isAssignableFrom(ChangePasswordViewModel::class.java) -> {
+                ChangePasswordViewModel(userPreferences) as T
+            }
+            modelClass.isAssignableFrom(NotifikasiViewModel::class.java) -> {
+                NotifikasiViewModel(userPreferences) as T
+            }
+            else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
         }
     }
 }

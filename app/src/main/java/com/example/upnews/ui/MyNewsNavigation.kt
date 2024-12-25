@@ -66,7 +66,9 @@ fun MyNewsNavigation(
                 colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.White)
             )
         },
-
+        bottomBar = {
+            BottomBar(navController = navController) // Tambahkan BottomBar di sini
+        }
         ) { paddingValues ->
         Column(
             modifier = Modifier

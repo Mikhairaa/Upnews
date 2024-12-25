@@ -195,9 +195,3 @@ fun DraftPage(
         }
     }
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//fun PreviewDraftScreen() {
-//    DraftPage()
-//}

@@ -38,12 +38,18 @@
     <string name="personal_data_lable">Personal Data</string>
     <string name="sub_personal_data_label">Please fill out your personal information in the form below.</string>
     <string name="phone_number_label">Phone Number*</string>
-    <string name="input_phone_number_label">Your phone number</string>
+    <string name="input_phone_number_label">Input phone number</string>
     <string name="bank_account_label">Bank Account*</string>
-    <string name="select_bank_account_label">Select bank account</string>
-    <string name="bank_account_number_label">Bank account number</string>
+    <string name="select_bank_account_label">Select bank account\n</string>
+    <string name="bank_account_number_label">Bank account number\n</string>
     <string name="send_label">Send</string>
     <string name="simpan_label">Save</string>
+    <string name="txt_home">Home</string>
+    <string name="txt_news">My News</string>
+    <string name="txt_upload">Upload</string>
+    <string name="txt_notif">Notif</string>
+    <string name="txt_profil">Profile</string>
+
     <string name="hapus_label">Hapus</string>
     <string name="edit_label">Edit</string>
     <string name="judul_required_error">Tittle Required</string>
