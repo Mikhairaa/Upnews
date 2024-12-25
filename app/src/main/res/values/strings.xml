@@ -16,22 +16,22 @@
     <string name="address_label">Address</string>
     <string name="uploadLabel">Upload</string>
     <string name="formLabel">Form</string>
-    <string name="draftLabel">Draft\n</string>
+    <string name="draftLabel">Draft</string>
     <string name="judul_label">Input Tittle</string>
-    <string name="tanggal_label">Choose Date</string>
-    <string name="waktu_label">GMT + 7</string>
+    <string name="tanggal_label">Date when the news event occurred</string>
+    <string name="waktu_label">Time when the news event occurred</string>
     <string name="form_tittle">News Submission Form Instructions</string>
     <string name="sub_tittle_label">Please fill out the following form to submit your news article. Ensure that all required fields are completed accurately.</string>
     <string name="tittle_label">News Tittle*</string>
-    <string name="input_tittle_label">Input tittle</string>
+    <string name="input_tittle_label">Create an eye-catching headline</string>
     <string name="date_label">Date*</string>
-    <string name="input_date_label">Choose date</string>
+    <string name="input_date_label">Date when the news event occurred</string>
     <string name="time_label">Time*</string>
-    <string name="time_input_label">Input time</string>
+    <string name="time_input_label">Time when the news event occurred</string>
     <string name="lokasi_label">Location*</string>
-    <string name="input_lokasi_label">Input location</string>
+    <string name="input_lokasi_label">Location where the news event occurred</string>
     <string name="news_description_label">News Description*</string>
-    <string name="input_news_description_label">Description . . .</string>
+    <string name="input_news_description_label">Write detailed news here. . . .</string>
     <string name="add_photo_video_label">Add Photo/Video*</string>
     <string name="photo_label">Photo</string>
     <string name="video_label">Video</string>
@@ -50,4 +50,7 @@
     <string name="txt_notif">Notif</string>
     <string name="txt_profil">Profile</string>
 
+    <string name="hapus_label">Hapus</string>
+    <string name="edit_label">Edit</string>
+    <string name="judul_required_error">Tittle Required</string>
 </resources>

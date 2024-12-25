@@ -2,19 +2,22 @@ package com.example.upnews.data.response
 
 import com.google.gson.annotations.SerializedName
 
-data class LoginResponse(
+data class GetProfileResponse(
 
 	@field:SerializedName("message")
 	val message: String? = null,
 
 	@field:SerializedName("user")
-	val user: User? = null
+	val user: UserProfile? = null
 )
 
-data class User(
+data class UserProfile(
 
 	@field:SerializedName("name")
 	val name: String? = null,
+
+	@field:SerializedName("fotoProfil")
+	val fotoProfil: String? = null,
 
 	@field:SerializedName("id")
 	val id: Int? = null,
@@ -22,6 +25,6 @@ data class User(
 	@field:SerializedName("email")
 	val email: String? = null,
 
-	@field:SerializedName("token")
-	val token: String? = null
+	@field:SerializedName("alamat")
+	val alamat: String? = null
 )
