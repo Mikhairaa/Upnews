@@ -19,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -45,6 +46,7 @@ import com.example.upnews.data.local.UserPreferences
 import com.example.upnews.data.response.RegisterResponse
 import com.example.upnews.ui.ViewModelFactory
 import com.example.upnews.ui.login.LoginViewModel
+import com.google.android.gms.location.LocationServices
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -64,7 +66,21 @@ fun SignupPage(
     BackHandler { navController.popBackStack() }
     val context = LocalContext.current
 
+    // Fungsi untuk mengambil lokasi pengguna dan set alamat
+    val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
 
+    // Ambil lokasi pengguna dan set alamat
+    LaunchedEffect(Unit) {
+        getLocationAndAddress(context, fusedLocationClient) { address ->
+            alamat = address // Menyimpan alamat yang didapatkan
+        }
+    }
+    LaunchedEffect(Unit) {
+        checkAndRequestLocationPermission(context)  // Pastikan izin lokasi diminta
+        getLocationAndAddress(context, fusedLocationClient) { address ->
+            alamat = address  // Menyimpan alamat yang ditemukan
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -178,6 +194,7 @@ fun SignupPage(
         Button(
             colors = ButtonDefaults.buttonColors(colorResource(id = R.color.merah)),
             onClick = {
+
                 signUpViewModel.register(nama, email, alamat, password)
             },
             shape = MaterialTheme.shapes.small,
