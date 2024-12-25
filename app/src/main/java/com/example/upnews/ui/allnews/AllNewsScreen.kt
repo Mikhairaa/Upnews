@@ -1,6 +1,6 @@
 package com.example.upnews
 
-
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -11,11 +11,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import com.example.upnews.data.local.UserPreferences
@@ -28,28 +30,23 @@ val CustomRed = Color(0xFFB80C09)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AllNewsScreen(
-    modifier:Modifier = Modifier,
+    modifier: Modifier = Modifier,
     navController: NavHostController,
     allViewModel: AllViewModel = viewModel(
         factory = ViewModelFactory(UserPreferences.getInstance(LocalContext.current))
     )
 ) {
-    // State dari ViewModel
     val allNews by allViewModel.allNews.collectAsState()
     val isLoading by allViewModel.isLoading.collectAsState(false)
     val errorMessage by allViewModel.errorMessage.collectAsState("")
 
-    val tabs = listOf("All", "On Progress", "Rejected", "Done")
-    var selectedTab by remember { mutableStateOf(0) }
-
     val scrollState = rememberScrollState()
 
-    // Panggil fetchAllNews saat pertama kali dimuat
     LaunchedEffect(Unit) {
         allViewModel.fetchAllNews()
     }
 
-    Scaffold() { paddingValues ->
+    Scaffold { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -57,16 +54,13 @@ fun AllNewsScreen(
                 .verticalScroll(scrollState)
                 .padding(horizontal = 16.dp, vertical = 8.dp)
         ) {
-
             Spacer(modifier = Modifier.height(16.dp))
 
             when {
-                // Kondisi Loading
                 isLoading -> {
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
                 }
 
-                // Kondisi Error
                 errorMessage.isNotEmpty() -> {
                     Text(
                         text = errorMessage,
@@ -75,7 +69,6 @@ fun AllNewsScreen(
                     )
                 }
 
-                // Kondisi Data Kosong
                 allNews.isEmpty() -> {
                     Text(
                         text = "No news available.",
@@ -84,13 +77,10 @@ fun AllNewsScreen(
                     )
                 }
 
-                // Tampilkan Data
                 else -> {
-                    allNews.forEach { allNews ->
-                        allNews.let {
-                            NewsCard(it)
-                            Spacer(modifier = Modifier.height(8.dp))
-                        }
+                    allNews.forEach { news ->
+                        NewsCard(news)
+                        Spacer(modifier = Modifier.height(8.dp))
                     }
                 }
             }
@@ -100,6 +90,8 @@ fun AllNewsScreen(
 
 @Composable
 fun NewsCard(all: BeritaAll) {
+    var isExpanded by remember { mutableStateOf(false) }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -109,7 +101,6 @@ fun NewsCard(all: BeritaAll) {
         elevation = CardDefaults.cardElevation(8.dp)
     ) {
         Column(modifier = Modifier.padding(0.dp)) {
-            // Header
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -132,7 +123,6 @@ fun NewsCard(all: BeritaAll) {
                 )
             }
 
-            // Content
             Column(
                 modifier = Modifier
                     .padding(16.dp)
@@ -142,8 +132,31 @@ fun NewsCard(all: BeritaAll) {
                 Text(text = "Date: ${all.tanggal}", fontSize = 14.sp)
                 Text(text = "Time: ${all.waktu}", fontSize = 14.sp)
                 Text(text = "Location: ${all.lokasi}", fontSize = 14.sp)
+
+                // Deskripsi expand button
+                if (isExpanded) {
+                    Text(
+                        text = "Deskripsi: ${all.deskripsi}",
+                        fontSize = 14.sp,
+                        modifier = Modifier.padding(top = 8.dp)
+                    )
+                }
+
+                IconButton(
+                    onClick = { isExpanded = !isExpanded },
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(top = if (isExpanded) 16.dp else 0.dp) // Tambahkan jarak jika sudah expanded
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.arrow_down),  // Ganti dengan ikon yang sudah diputar
+                        contentDescription = "Expand Details",
+                        tint = CustomRed,
+                        modifier = Modifier.rotate(if (isExpanded) 180f else 0f)
+                            .size(15.dp)
+                    )
+                }
             }
         }
     }
 }
-

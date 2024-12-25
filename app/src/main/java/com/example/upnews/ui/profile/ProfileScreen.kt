@@ -1,32 +1,28 @@
-package com.example.upnews.ui.screens
+package com.example.upnews.ui.profile
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.upnews.R
 import com.example.upnews.data.local.UserPreferences
+import com.example.upnews.ui.BottomBar
 import com.example.upnews.ui.ViewModelFactory
-import com.example.upnews.ui.profile.ProfileViewModel
-
+import com.example.upnews.ui.theme.Merah_Hati
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,16 +33,24 @@ fun ProfileScreen(
         factory = ViewModelFactory(UserPreferences.getInstance(LocalContext.current))
     )
 ) {
-    // State observables
     val profileState by profileViewModel.profileState.collectAsState()
     val isLoading by profileViewModel.isLoading.collectAsState(false)
     val errorMessage by profileViewModel.errorMessage.collectAsState()
+    val logoutState by profileViewModel.logoutState.collectAsState()
 
     val scrollState = rememberScrollState()
+    var showLogoutDialog by remember { mutableStateOf(false) }
 
-    // Fetch profile data when the composable is first loaded
     LaunchedEffect(Unit) {
         profileViewModel.fetchProfile()
+    }
+
+    LaunchedEffect(logoutState) {
+        if (logoutState) {
+            navController.navigate("login") {
+                popUpTo(0) { inclusive = true }
+            }
+        }
     }
 
     Scaffold(
@@ -55,6 +59,9 @@ fun ProfileScreen(
                 title = { Text("Profile", color = Color.Black) },
                 colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.White)
             )
+        },
+        bottomBar = {
+            BottomBar(navController = navController) // Menambahkan BottomBar di sini
         }
     ) { paddingValues ->
         Column(
@@ -65,14 +72,12 @@ fun ProfileScreen(
                 .background(MaterialTheme.colorScheme.background)
                 .padding(16.dp)
         ) {
-            // Show loading indicator
             if (isLoading) {
                 CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
             }
 
-            // Show error message if any
             errorMessage?.takeIf { it.isNotBlank() }?.let {
                 Text(
                     text = it,
@@ -81,7 +86,6 @@ fun ProfileScreen(
                 )
             }
 
-            // Show profile data if available
             profileState?.let { profile ->
                 ProfileCard(
                     navController = navController,
@@ -92,9 +96,40 @@ fun ProfileScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Logout Card
-            LogoutCard()
+            // Mengganti button Change Password menjadi ikon
+            ChangePwCard(onChangePwClick = {
+                navController.navigate("ForgotPw")
+            })
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            LogoutCard(onLogoutClick = { showLogoutDialog = true })
         }
+    }
+
+    if (showLogoutDialog) {
+        AlertDialog(
+            onDismissRequest = { showLogoutDialog = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    showLogoutDialog = false
+                    profileViewModel.logout()
+                }) {
+                    Text("Yes")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showLogoutDialog = false }) {
+                    Text("No")
+                }
+            },
+            title = {
+                Text(text = "Confirm Logout")
+            },
+            text = {
+                Text(text = "Are you sure you want to log out?")
+            }
+        )
     }
 }
 
@@ -108,7 +143,7 @@ fun ProfileCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(4.dp),
-        colors = CardDefaults.cardColors(containerColor = Merah_Hati),
+        colors = CardDefaults.cardColors(containerColor = com.example.upnews.ui.screens.Merah_Hati),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(8.dp)
     ) {
@@ -161,7 +196,7 @@ fun ProfileCard(
 }
 
 @Composable
-fun LogoutCard() {
+fun ChangePwCard(onChangePwClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -176,9 +211,59 @@ fun LogoutCard() {
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            Spacer(modifier = Modifier.width(16.dp))
 
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(
+                    text = "Change Password",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = "Ubah sandi untuk keamanan akun",
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                )
+            }
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            // Ikon rinci yang mengarah ke halaman ForgotPw
+            IconButton(
+                onClick = onChangePwClick // Menavigasi ke halaman ForgotPw saat diklik
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.rinci),
+                    contentDescription = "Change Password Button",
+                    tint = Merah_Hati,
+                    modifier = Modifier.size(32.dp) // Ukuran ikon dinaikkan
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun LogoutCard(onLogoutClick: () -> Unit) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(4.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(8.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Icon(
-                painter = painterResource(id = R.drawable.logout),
+                painter = painterResource(id = R.drawable.upnews), // Ikon Logout
                 contentDescription = "Logout",
                 tint = Merah_Hati,
                 modifier = Modifier.size(24.dp)
@@ -201,19 +286,21 @@ fun LogoutCard() {
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                 )
             }
+
             Spacer(modifier = Modifier.width(8.dp))
-            Icon(
-                painter = painterResource(id = R.drawable.kosong),
-                contentDescription = "Arrow",
-                tint = Color.White, // Warna panah di ujung kanan
-                modifier = Modifier.size(24.dp) // Ukuran ikon sama dengan logout
-            )
+
+            Button(
+                onClick = onLogoutClick,
+                colors = ButtonDefaults.buttonColors(containerColor = Merah_Hati)
+            ) {
+                Text(text = "Logout", color = Color.White)
             }
         }
     }
+}
 
-//@Preview(showBackground = true)
-//@Composable
-//fun ProfileScreenPreview() {
-//    ProfileScreen(navController = NavHostController(LocalContext.current))
-//}
+@Preview(showBackground = true)
+@Composable
+fun ProfileScreenPreview() {
+    ProfileScreen(navController = NavHostController(LocalContext.current))
+}

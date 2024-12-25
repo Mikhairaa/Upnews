@@ -24,6 +24,9 @@ class ProfileViewModel(private val userPreferences: UserPreferences) : ViewModel
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> get() = _errorMessage
 
+    private val _logoutState = MutableStateFlow(false)
+    val logoutState: StateFlow<Boolean> get() = _logoutState
+
     fun fetchProfile() {
         viewModelScope.launch {
             _isLoading.value = true
@@ -58,6 +61,14 @@ class ProfileViewModel(private val userPreferences: UserPreferences) : ViewModel
                     _isLoading.value = false
                 }
             }
+        }
+    }
+
+    fun logout() {
+        viewModelScope.launch {
+            userPreferences.logout()
+            _logoutState.value = true // Menandakan logout berhasil
+            Log.d("ProfileViewModel", "User logged out successfully")
         }
     }
 }

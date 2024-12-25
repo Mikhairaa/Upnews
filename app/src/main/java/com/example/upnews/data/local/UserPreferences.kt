@@ -95,6 +95,32 @@ class UserPreferences private constructor(private val dataStore: DataStore<Prefe
         return dataStore.data
             .map { preferences -> preferences[USER_ID] }
     }
+    suspend fun logout() {
+        dataStore.edit { preferences ->
+            preferences[IS_LOGGED_IN] = false
+            preferences[ACCESS_TOKEN] = ""
+            preferences[USER_NAME] = ""
+            preferences[USER_EMAIL] = ""
+            preferences[USER_ID] = ""
+        }
+        Log.d("UserPreferences", "User logged out")
+    }
+    suspend fun savePassword(password: String) {
+        dataStore.edit { preferences ->
+            preferences[USER_PASSWORD] = password
+        }
+        Log.d("UserPreferences", "Password saved: $password")
+    }
+
+    // Mengambil password pengguna
+    fun getPassword(): Flow<String?> {
+        return dataStore.data
+            .map { preferences -> preferences[USER_PASSWORD] }
+    }
+    fun getUserId(): Flow<String?> {
+        return dataStore.data
+            .map { preferences -> preferences[USER_ID] }
+    }
 
     companion object {
         @Volatile
