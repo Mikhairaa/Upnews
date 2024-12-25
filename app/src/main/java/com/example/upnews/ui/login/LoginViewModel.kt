@@ -11,7 +11,7 @@ import com.example.upnews.data.response.LoginResponse
 import com.example.upnews.data.retrofit.ApiConfig
 import kotlinx.coroutines.launch
 
-class LoginViewModel(private val userPreferences: UserPreferences): ViewModel() {
+class  LoginViewModel(private val userPreferences: UserPreferences): ViewModel() {
     private val _loginResult = MutableLiveData<Result<LoginResponse>>()
     val loginResult: LiveData<Result<LoginResponse>> = _loginResult
 
