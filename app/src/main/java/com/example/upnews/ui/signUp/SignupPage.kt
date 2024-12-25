@@ -194,7 +194,6 @@ fun SignupPage(
         Button(
             colors = ButtonDefaults.buttonColors(colorResource(id = R.color.merah)),
             onClick = {
-
                 signUpViewModel.register(nama, email, alamat, password)
             },
             shape = MaterialTheme.shapes.small,

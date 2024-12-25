@@ -12,6 +12,8 @@ import com.example.upnews.data.response.RegisterResponse
 import com.example.upnews.data.response.User
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+
+
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "session")
 
 class UserPreferences private constructor(private val dataStore: DataStore<Preferences>) {
@@ -23,17 +25,11 @@ class UserPreferences private constructor(private val dataStore: DataStore<Prefe
     private val USER_ID = stringPreferencesKey("user_id")
     private val USER_ADDRESS = stringPreferencesKey("user_address")
 
-    suspend fun saveToken(token: String) {
-        dataStore.edit { preferences ->
-            preferences[ACCESS_TOKEN] = token
-        }
-        Log.d("UserPreferences", "Token saved: $token")
-    }
-
     fun getToken(): Flow<String?> {
         return dataStore.data
             .map { preferences -> preferences[ACCESS_TOKEN] }
     }
+
     suspend fun saveUser(user: User) {
         dataStore.edit { preferences ->
             preferences[IS_LOGGED_IN] = true
@@ -53,6 +49,34 @@ class UserPreferences private constructor(private val dataStore: DataStore<Prefe
             preferences[USER_NAME] = registerResponse.nama ?: ""
         }
         Log.d("saveRegisterResponse", "Register response saved: $registerResponse")
+    }
+
+    fun getUser(): Flow<RegisterResponse?> {
+        return dataStore.data.map { preferences ->
+            val name = preferences[USER_NAME]
+            val email = preferences[USER_EMAIL]
+            val id = preferences[USER_ID]?.toIntOrNull()  // Konversi ID menjadi Int
+            val alamat = preferences[USER_ADDRESS] ?: ""
+
+            // Debug log untuk memeriksa data yang diambil
+            Log.d("UserPreferences", "getUser: name=$name, email=$email, id=$id, alamat=$alamat")
+
+            // Validasi data
+            if (name != null && email != null && id != null && alamat.isNotEmpty()) {
+                RegisterResponse(
+                    nama = name,
+                    id = id,
+                    email = email,
+                    alamat = alamat
+                )
+            } else {
+                Log.e(
+                    "UserPreferences",
+                    "Data is missing or invalid: name=$name, email=$email, id=$id, alamat=$alamat"
+                )
+                null
+            }
+        }
     }
 
     suspend fun saveIsUserLoggedIn(isLoggedIn: Boolean) {
@@ -83,4 +107,3 @@ class UserPreferences private constructor(private val dataStore: DataStore<Prefe
         }
     }
 }
-

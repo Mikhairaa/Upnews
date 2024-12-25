@@ -2,34 +2,19 @@ package com.example.upnews.data.response
 
 import com.google.gson.annotations.SerializedName
 
-data class GetDraftResponse(
+data class GetAllResponse(
 
-	@field:SerializedName("data")
-	val data: List<DataItem?>? = null,
+	@field:SerializedName("berita")
+	val berita: List<BeritaAll?>? = null,
 
 	@field:SerializedName("message")
 	val message: String? = null
 )
 
-data class DataItem(
-
-	@field:SerializedName("no_hp")
-	val noHp: String? = null,
-
-	@field:SerializedName("no_rek")
-	val noRek: String? = null,
-
-	@field:SerializedName("id_user")
-	val idUser: Int? = null,
-
-	@field:SerializedName("createdAt")
-	val createdAt: String? = null,
+data class BeritaAll(
 
 	@field:SerializedName("lokasi")
 	val lokasi: String? = null,
-
-	@field:SerializedName("bukti")
-	val bukti: String? = null,
 
 	@field:SerializedName("waktu")
 	val waktu: String? = null,
@@ -47,8 +32,5 @@ data class DataItem(
 	val idBerita: Int? = null,
 
 	@field:SerializedName("status")
-	val status: String? = null,
-
-	@field:SerializedName("updatedAt")
-	val updatedAt: String? = null
+	val status: String? = null
 )
