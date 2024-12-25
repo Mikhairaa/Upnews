@@ -2,31 +2,16 @@ package com.example.upnews.data.response
 
 import com.google.gson.annotations.SerializedName
 
-data class HomepageResponse(
+data class GetRejectedResponse(
 
 	@field:SerializedName("berita")
-	val berita: List<BeritaItem?>? = null,
+	val berita: List<BeritaRejected?>? = null,
 
 	@field:SerializedName("message")
-	val message: String? = null,
-
-	@field:SerializedName("user")
-	val user: UserHome? = null
+	val message: String? = null
 )
 
-data class UserHome(
-
-	@field:SerializedName("name")
-	val name: String? = null,
-
-	@field:SerializedName("id")
-	val id: Int? = null,
-
-	@field:SerializedName("email")
-	val email: String? = null
-)
-
-data class BeritaHome(
+data class BeritaRejected(
 
 	@field:SerializedName("lokasi")
 	val lokasi: String? = null,

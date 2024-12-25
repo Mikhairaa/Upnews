@@ -6,10 +6,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 object ApiConfig {
     private const val BASE_URL = "https://upnews.ftiorganizerhub.tech/api/"
 
-//    private val client = OkHttpClient.Builder()
-//        .connectTimeout(600, TimeUnit.SECONDS)
-//        .readTimeout(600, TimeUnit.SECONDS)
-//        .writeTimeout(600, TimeUnit.SECONDS)
 
     val apiService: ApiService by lazy {
         Retrofit.Builder()
