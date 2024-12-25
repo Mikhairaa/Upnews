@@ -1,146 +1,212 @@
 package com.example.upnews.ui.forgotPw
 
+import android.content.Context
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Info
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.upnews.R
+import com.example.upnews.data.local.UserPreferences
+import com.example.upnews.ui.ViewModelFactory
 
-data class NotificationItem(
-    val title: String,
-    val date: String,
-    val description: String,
-    val link: String
-)
-@Composable
-fun NotificationCard(notification: NotificationItem) {
-    var isChecked by remember { mutableStateOf(false) } // Menyimpan status checkbox
-
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp),
-        shape = RoundedCornerShape(8.dp),
-        elevation = CardDefaults.cardElevation(4.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White) // Card with white background
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = Icons.Filled.Info, // Menggunakan ikon Info dari Material Icons
-                    contentDescription = "Info",
-                    modifier = Modifier.size(24.dp),
-                    tint = Color(0xFFB80C09) // Mengganti warna ikon dengan warna #B80C09
-                )
-                Spacer(modifier  = Modifier.width(8.dp))
-                Text(
-                    text = notification.title,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.Black
-                )
-            }
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = notification.description,
-                style = MaterialTheme.typography.bodySmall,
-                color = Color.Gray
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = notification.date,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.Gray
-                )
-                // This places the checkbox on the right side of the row
-                Checkbox(
-                    checked = isChecked,
-                    onCheckedChange = { isChecked = it },
-                    modifier = Modifier.size(20.dp)
-                )
-            }
-        }
-    }
+// Fungsi ekstensi untuk menampilkan Toast
+fun Context.showToast(message: String) {
+    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
 }
 
 @Composable
-fun NotificationsList(onBackClick: () -> Unit = {}) {
-    val notifications = listOf(
-        NotificationItem(
-            title = "Berita Anda yang berjudul Fakta Terbaru Pemilik Akun Fufufafa diterima.",
-            date = "11 Okt 2024, 08:00 WIB",
-            description = "Imbalan telah dikirimkan, silahkan cek email Anda.",
-            link = "email"
-        ),
-        NotificationItem(
-            title = "Berita Anda yang berjudul Gunung Lewotobi Kembali Meletus.",
-            date = "8 Nov 2024, 16:00 WIB",
-            description = "Silakan periksa ketentuan pengajuan atau kirimkan berita lain yang sesuai.",
-            link = "link"
-        )
-    )
+fun ForgotPw(
+    modifier: Modifier = Modifier,
+    navController: NavHostController = rememberNavController(),
+    changePasswordViewModel: ChangePasswordViewModel = viewModel(factory = ViewModelFactory(UserPreferences.getInstance(LocalContext.current)))
+) {
+    // States for handling UI
+    var passwordLama by remember { mutableStateOf("") }
+    var passwordBaru by remember { mutableStateOf("") }
+    var konfirmasiPassword by remember { mutableStateOf("") }
+    var isLoading by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+    val context = LocalContext.current
 
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(16.dp)
+    val changePasswordResult by changePasswordViewModel.changePasswordResult.observeAsState("")
+    val isLoadingState by changePasswordViewModel.isLoading.observeAsState(false)
+
+    // Menangani hasil perubahan password dengan LaunchedEffect
+    LaunchedEffect(changePasswordResult) {
+        when (changePasswordResult) {
+            "Password berhasil diubah" -> {
+                // Berhasil mengganti password
+                context.showToast("Password berhasil diubah")
+                navController.navigate("login")
+            }
+            "Semua kolom harus diisi" -> {
+                context.showToast("Semua kolom harus diisi")
+            }
+            "Password baru dan konfirmasi password tidak cocok" -> {
+                context.showToast("Password baru dan konfirmasi password tidak cocok")
+            }
+            "Token tidak ditemukan" -> {
+                context.showToast("Token tidak ditemukan")
+            }
+            "Response kosong, gagal mengganti password" -> {
+                context.showToast("Response kosong, gagal mengganti password")
+            }
+            "Gagal mengganti password" -> {
+                context.showToast("Gagal mengganti password")
+            }
+            else -> {
+                // Jika ada error lain
+                context.showToast("Terjadi kesalahan: $changePasswordResult")
+            }
+        }
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 30.dp, vertical = 16.dp),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp, start = 16.dp),
+            contentAlignment = Alignment.TopStart
         ) {
-            IconButton(onClick = { onBackClick() }) {
+            IconButton(onClick = { navController.navigate("login") }) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = "Back",
-                    tint = Color(0xFFB80C09)
+                    modifier = Modifier.size(26.dp),
+                    tint = colorResource(id = R.color.custom_red)
                 )
             }
-            Spacer(modifier = Modifier.width(8.dp))
+        }
+
+        Spacer(modifier = Modifier.height(40.dp))
+
+        Image(
+            painter = painterResource(id = R.drawable.upnews),
+            contentDescription = "Up News Logo",
+            modifier = Modifier
+                .size(120.dp)
+                .padding(bottom = 8.dp)
+        )
+
+        Text(
+            text = "Change Password",
+            style = TextStyle(
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            ),
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        // Input Fields
+        OutlinedTextField(
+            value = passwordLama,
+            onValueChange = { passwordLama = it },
+            label = { Text("Old Password") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
+            visualTransformation = PasswordVisualTransformation()
+        )
+
+        OutlinedTextField(
+            value = passwordBaru,
+            onValueChange = { passwordBaru = it },
+            label = { Text("New Password") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
+            visualTransformation = PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions.Default.copy(
+                imeAction = ImeAction.Next
+            )
+        )
+
+        OutlinedTextField(
+            value = konfirmasiPassword,
+            onValueChange = { konfirmasiPassword = it },
+            label = { Text("Confirm Password") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
+            visualTransformation = PasswordVisualTransformation(),
+            keyboardOptions = KeyboardOptions.Default.copy(
+                imeAction = ImeAction.Done
+            ),
+            keyboardActions = KeyboardActions(onDone = {
+                // Menyelesaikan input saat tekan 'Done'
+            })
+        )
+
+        // Menampilkan error message jika ada
+        if (errorMessage != null) {
             Text(
-                text = "Notification",
-                style = TextStyle(
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
-                    textAlign = TextAlign.Start
-                ),
-                color = colorResource(id = R.color.custom_red),
-                modifier = Modifier.weight(1f) // Mengisi ruang kosong untuk memusatkan judul
+                text = errorMessage ?: "",
+                color = Color.Red,
+                style = TextStyle(fontSize = 12.sp)
             )
         }
 
-        Spacer(modifier = Modifier.height(10.dp))
-        Divider(
-            color = Color.Gray,
-            thickness = 1.dp,
+        Spacer(modifier = Modifier.height(20.dp))
+
+        // Button untuk mengganti password
+        Button(
+            onClick = {
+                // Memanggil ViewModel untuk mengganti password
+                isLoading = true
+                changePasswordViewModel.changePassword(passwordLama, passwordBaru, konfirmasiPassword)
+            },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp)
-        )
-        notifications.forEach { notification ->
-            NotificationCard(notification = notification)
+                .height(40.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = colorResource(id = R.color.custom_red)
+            ),
+            enabled = !isLoadingState // Menonaktifkan tombol saat sedang memproses
+        ) {
+            if (isLoadingState) {
+                CircularProgressIndicator(color = Color.White, modifier = Modifier.size(20.dp))
+            } else {
+                Text(text = "CHANGE PASSWORD", color = Color.White)
+            }
         }
+
+        Spacer(modifier = Modifier.height(200.dp))
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun NotificationsListPreview() {
-    NotificationsList(onBackClick = { /* Tambahkan aksi navigasi kembali di sini */ })
+fun PreviewForgotPw() {
+    ForgotPw()
 }

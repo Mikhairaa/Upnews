@@ -1,10 +1,10 @@
-package com.example.upnews.ui.homepage
+package com.example.upnews.ui.notifikasi
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.upnews.data.local.UserPreferences
-import com.example.upnews.data.response.BeritaHome
+import com.example.upnews.data.response.DataNotifikasi
+
 import com.example.upnews.data.retrofit.ApiConfig
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,16 +13,10 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
 
-class HomeViewModel(private val userPreferences: UserPreferences) : ViewModel() {
+class NotifikasiViewModel(private val userPreferences: UserPreferences) : ViewModel() {
 
-
-    private val _userName = MutableStateFlow<String?>(null)
-    val userName: StateFlow<String?> get() = _userName
-
-
-    private val _beritaList = MutableStateFlow<List<BeritaHome>>(emptyList())
-    val beritaList: StateFlow<List<BeritaHome>> get() = _beritaList
-
+    private val _notifikasiList = MutableStateFlow<List<DataNotifikasi>>(emptyList())
+    val notifikasiList: StateFlow<List<DataNotifikasi>> get() = _notifikasiList
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> get() = _isLoading
@@ -31,8 +25,8 @@ class HomeViewModel(private val userPreferences: UserPreferences) : ViewModel() 
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> get() = _errorMessage
 
-    // Function to fetch homepage data
-    fun fetchHomepageData() {
+    // Function to fetch notifikasi data
+    fun fetchNotifikasiData() {
         viewModelScope.launch {
             // Mark loading as true before starting data fetch
             _isLoading.value = true
@@ -46,37 +40,45 @@ class HomeViewModel(private val userPreferences: UserPreferences) : ViewModel() 
                     _errorMessage.value = "No valid token found"
                     return@launch
                 }
+// Pastikan response.data sudah terisi
+                val response = ApiConfig.apiService.getNotifikasi("Bearer $token")
+                Log.d("NotifikasiViewModel", "API Response: ${response.message}")
 
-                // Use the token to fetch homepage data
-                val response = ApiConfig.apiService.getHomepageData("Bearer $token")
-                Log.d("HomeViewModel", "API Response: ${response.message}")
-
-                // Ensure userName is set only once
-                response.user?.name?.let {
-                    if (_userName.value == null) {
-                        _userName.value = it
+// Jika response.data tidak null, kita lakukan pemetaan
+                if (response.dataNotifikasi != null) {
+                    val notifikasiMapped = response.dataNotifikasi.filterNotNull().map { dataItem ->
+                        // Map DataItem ke DataNotifikasi
+                        DataNotifikasi(
+                            createdAt = dataItem.createdAt,
+                            idNotifikasi = dataItem.idNotifikasi,
+                            idUser = dataItem.idUser,
+                            deskripsi = dataItem.deskripsi,
+                            idBerita = dataItem.idBerita,
+                            status = dataItem.status,
+                            updatedAt = dataItem.updatedAt
+                        )
                     }
+                    // Simpan hasil pemetaan ke StateFlow
+                    _notifikasiList.value = notifikasiMapped
+                } else {
+                    // Tangani jika response.data null
+                    _errorMessage.value = "Failed to fetch drafts: ${response.message ?: "Unknown error"}"
                 }
 
-                // Save the list of news articles to StateFlow, ensuring non-null entries
-                _beritaList.value = response.berita?.filterNotNull() ?: emptyList()
-
-                // Clear any previous error message
-                _errorMessage.value = null
 
             } catch (e: HttpException) {
                 // Handle server errors more clearly
                 val errorBody = e.response()?.errorBody()?.string()
                 _errorMessage.value = "Server error: ${e.code()} - ${errorBody ?: e.message()}"
-                Log.e("HomeViewModel", "Server error", e)
+                Log.e("NotifikasiViewModel", "Server error", e)
             } catch (e: IOException) {
                 // Handle network errors
                 _errorMessage.value = "Network error: Please check your internet connection"
-                Log.e("HomeViewModel", "Network error", e)
+                Log.e("NotifikasiViewModel", "Network error", e)
             } catch (e: Exception) {
                 // Handle unexpected errors
                 _errorMessage.value = "Unexpected error: ${e.localizedMessage}"
-                Log.e("HomeViewModel", "Unexpected error", e)
+                Log.e("NotifikasiViewModel", "Unexpected error", e)
             } finally {
                 // Mark loading as false when operation is complete
                 _isLoading.value = false
