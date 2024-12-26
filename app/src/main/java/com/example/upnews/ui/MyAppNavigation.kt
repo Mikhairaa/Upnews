@@ -10,15 +10,11 @@ import androidx.navigation.compose.rememberNavController
 import com.example.app.view.upload.DraftPage
 import com.example.app.view.upload.FormPage
 import com.example.upnews.AllNewsScreen
-import com.example.upnews.ui.MyNewsNavigation
-import com.example.upnews.ui.UploadPage
-import com.example.upnews.ui.WelcomePage
 import com.example.upnews.ui.forgotPw.ForgotPw
 import com.example.upnews.AllNewsScreen
 import com.example.upnews.ui.screens.DoneScreen
 import com.example.upnews.ui.screens.OnProgressScreen
 import com.example.upnews.ui.screens.UpdateProfileScreen
-import com.example.upnews.ui.screens.ProfileScreen
 import com.example.upnews.ui.screens.RejectedScreen
 import com.example.app.view.upload.DraftPage
 import com.example.app.view.upload.FormPage

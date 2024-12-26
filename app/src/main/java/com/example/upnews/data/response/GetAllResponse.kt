@@ -5,13 +5,13 @@ import com.google.gson.annotations.SerializedName
 data class GetAllResponse(
 
 	@field:SerializedName("berita")
-	val berita: List<BeritaItem?>? = null,
+	val berita: List<BeritaAll?>? = null,
 
 	@field:SerializedName("message")
 	val message: String? = null
 )
 
-data class BeritaItem(
+data class BeritaAll(
 
 	@field:SerializedName("lokasi")
 	val lokasi: String? = null,

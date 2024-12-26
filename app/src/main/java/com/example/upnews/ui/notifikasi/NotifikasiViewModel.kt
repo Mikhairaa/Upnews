@@ -3,6 +3,7 @@ package com.example.upnews.ui.notifikasi
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.upnews.data.local.UserPreferences
 import com.example.upnews.data.response.DataNotifikasi
 
 import com.example.upnews.data.retrofit.ApiConfig
