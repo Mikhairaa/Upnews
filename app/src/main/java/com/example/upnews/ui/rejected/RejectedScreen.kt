@@ -9,13 +9,16 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.example.upnews.R
 import com.example.upnews.data.local.UserPreferences
 import com.example.upnews.ui.theme.Merah_Hati
 import com.example.upnews.ui.theme.UpnewsTheme
@@ -76,6 +79,8 @@ fun RejectedScreen(
 
 @Composable
 fun RejectedNewsCard(newsItem: BeritaRejected) {
+    var isExpanded by remember { mutableStateOf(false)
+    }
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -129,6 +134,29 @@ fun RejectedNewsCard(newsItem: BeritaRejected) {
                 Text(text = "Date: ${newsItem.tanggal}", fontSize = 14.sp)
                 Text(text = "Time: ${newsItem.waktu}", fontSize = 14.sp)
                 Text(text = "Location: ${newsItem.lokasi}", fontSize = 14.sp)
+                if (isExpanded) {
+                    Text(
+                        text = "Deskripsi: ${newsItem.deskripsi}",
+                        fontSize = 14.sp,
+                        modifier = Modifier.padding(top = 8.dp)
+                    )
+                }
+
+                // Tombol untuk expand/collapse
+                IconButton(
+                    onClick = { isExpanded = !isExpanded },
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(top = if (isExpanded) 16.dp else 0.dp) // Tambahkan jarak jika sudah expanded
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.arrow_down),  // Ganti dengan ikon yang sudah diputar
+                        contentDescription = "Expand Details",
+                        tint = com.example.upnews.CustomRed,
+                        modifier = Modifier.rotate(if (isExpanded) 180f else 0f)
+                            .size(15.dp)
+                    )
+                }
             }
         }
     }

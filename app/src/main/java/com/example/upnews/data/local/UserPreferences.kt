@@ -12,8 +12,6 @@ import com.example.upnews.data.response.RegisterResponse
 import com.example.upnews.data.response.User
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.first
 
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "session")
@@ -28,37 +26,11 @@ class UserPreferences private constructor(private val dataStore: DataStore<Prefe
     private val USER_ADDRESS = stringPreferencesKey("user_address")
     private val USER_PASSWORD = stringPreferencesKey("user_password")
 
-    suspend fun saveToken(token: String) {
-        dataStore.edit { preferences ->
-            preferences[ACCESS_TOKEN] = token
-        }
-        Log.d("UserPreferences", "Token saved: $token")
-    }
-    fun getUser(): Flow<RegisterResponse?> {
-        return dataStore.data.map { preferences ->
-            val name = preferences[USER_NAME]
-            val email = preferences[USER_EMAIL]
-            val id = preferences[USER_ID]?.toIntOrNull()  // Pastikan ID dapat dikonversi menjadi Int
-            val alamat = preferences[USER_ADDRESS] ?: ""
-
-            // Pastikan ID valid dan data lainnya ada sebelum mengembalikan response
-            if (name != null && email != null && id != null && alamat.isNotEmpty()) {
-                RegisterResponse(
-                    nama = name,
-                    id = id,
-                    email = email,
-                    alamat = alamat
-                )
-            } else {
-                null
-            }
-        }
-    }
-
     fun getToken(): Flow<String?> {
         return dataStore.data
             .map { preferences -> preferences[ACCESS_TOKEN] }
     }
+
     suspend fun saveUser(user: User) {
         dataStore.edit { preferences ->
             preferences[IS_LOGGED_IN] = true
@@ -80,28 +52,33 @@ class UserPreferences private constructor(private val dataStore: DataStore<Prefe
         Log.d("saveRegisterResponse", "Register response saved: $registerResponse")
     }
 
+    fun getUser(): Flow<RegisterResponse?> {
+        return dataStore.data.map { preferences ->
+            val name = preferences[USER_NAME]
+            val email = preferences[USER_EMAIL]
+            val id = preferences[USER_ID]?.toIntOrNull()  // Konversi ID menjadi Int
+            val alamat = preferences[USER_ADDRESS] ?: ""
 
-//    fun getUser(): Flow<User?> {
-//        return dataStore.data.map { preferences ->
-//            val name = preferences[USER_NAME]
-//            val email = preferences[USER_EMAIL]
-//            val id = preferences[USER_ID]?.toIntOrNull()
-//            val token = preferences[ACCESS_TOKEN]
-//            val alamat = preferences[USER_ADDRESS]
-//
-//            if (name != null && email != null && token != null && alamat != null) {
-//                User(
-//                    name = name,
-//                    id = id,
-//                    email = email,
-//                    token = token,
-//                    alamat = alamat
-//                )
-//            } else {
-//                null
-//            }
-//        }
-//    }
+            // Debug log untuk memeriksa data yang diambil
+            Log.d("UserPreferences", "getUser: name=$name, email=$email, id=$id, alamat=$alamat")
+
+            // Validasi data
+            if (name != null && email != null && id != null && alamat.isNotEmpty()) {
+                RegisterResponse(
+                    nama = name,
+                    id = id,
+                    email = email,
+                    alamat = alamat
+                )
+            } else {
+                Log.e(
+                    "UserPreferences",
+                    "Data is missing or invalid: name=$name, email=$email, id=$id, alamat=$alamat"
+                )
+                null
+            }
+        }
+    }
 
     suspend fun saveIsUserLoggedIn(isLoggedIn: Boolean) {
         dataStore.edit { preferences ->
@@ -115,6 +92,10 @@ class UserPreferences private constructor(private val dataStore: DataStore<Prefe
             .map { preferences -> preferences[IS_LOGGED_IN] == true }
     }
 
+    fun getUserId(): Flow<String?> {
+        return dataStore.data
+            .map { preferences -> preferences[USER_ID] }
+    }
     suspend fun logout() {
         dataStore.edit { preferences ->
             preferences[IS_LOGGED_IN] = false
@@ -125,22 +106,11 @@ class UserPreferences private constructor(private val dataStore: DataStore<Prefe
         }
         Log.d("UserPreferences", "User logged out")
     }
-    // Menyimpan password pengguna
     suspend fun savePassword(password: String) {
         dataStore.edit { preferences ->
             preferences[USER_PASSWORD] = password
         }
         Log.d("UserPreferences", "Password saved: $password")
-    }
-
-    // Mengambil password pengguna
-    fun getPassword(): Flow<String?> {
-        return dataStore.data
-            .map { preferences -> preferences[USER_PASSWORD] }
-    }
-    fun getUserId(): Flow<String?> {
-        return dataStore.data
-            .map { preferences -> preferences[USER_ID] }
     }
 
     companion object {
