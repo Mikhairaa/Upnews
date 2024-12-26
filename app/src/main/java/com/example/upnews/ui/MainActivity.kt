@@ -12,7 +12,6 @@ import androidx.navigation.compose.rememberNavController
 
 import com.example.upnews.data.local.UserPreferences
 import kotlinx.coroutines.flow.Flow
-import com.example.upnews.ui.MyAppNavigation
 
 class  MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
