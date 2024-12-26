@@ -10,6 +10,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.upnews.data.response.BeritaAll
+import com.example.upnews.data.response.GetAllResponse
 
 @Composable
 fun NewsDetailScreen(news: BeritaAll) {
