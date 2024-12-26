@@ -24,6 +24,7 @@ class UserPreferences private constructor(private val dataStore: DataStore<Prefe
     private val USER_EMAIL = stringPreferencesKey("user_email")
     private val USER_ID = stringPreferencesKey("user_id")
     private val USER_ADDRESS = stringPreferencesKey("user_address")
+    private val USER_PASSWORD = stringPreferencesKey("user_password")
 
     fun getToken(): Flow<String?> {
         return dataStore.data
@@ -110,16 +111,6 @@ class UserPreferences private constructor(private val dataStore: DataStore<Prefe
             preferences[USER_PASSWORD] = password
         }
         Log.d("UserPreferences", "Password saved: $password")
-    }
-
-    // Mengambil password pengguna
-    fun getPassword(): Flow<String?> {
-        return dataStore.data
-            .map { preferences -> preferences[USER_PASSWORD] }
-    }
-    fun getUserId(): Flow<String?> {
-        return dataStore.data
-            .map { preferences -> preferences[USER_ID] }
     }
 
     companion object {
