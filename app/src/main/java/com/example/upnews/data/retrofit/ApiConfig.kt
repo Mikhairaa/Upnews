@@ -6,7 +6,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 object ApiConfig {
     private const val BASE_URL = "https://upnews.ftiorganizerhub.tech/api/"
 
-
     val apiService: ApiService by lazy {
         Retrofit.Builder()
             .baseUrl(BASE_URL)

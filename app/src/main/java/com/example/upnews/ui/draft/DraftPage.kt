@@ -36,7 +36,7 @@ val CustomRed = Color(0xFFB80C09)
 fun DraftPage(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-   draftViewModel: DraftViewModel = viewModel(
+    draftViewModel: DraftViewModel = viewModel(
         factory = ViewModelFactory(UserPreferences.getInstance(LocalContext.current))),
 ) {
 
@@ -168,7 +168,7 @@ fun DraftPage(
                                             Log.e("DraftPage", "idBerita is null, cannot navigate to FormPage")
                                         }
                                     },
-                                            onDeleteClick = {
+                                    onDeleteClick = {
                                         if (draft.idBerita != null) {
                                             Log.d("DraftPage", "Delete clicked for: ${draft.judul}")
                                             draftViewModel.deleteDraft(draft.idBerita)
@@ -195,3 +195,9 @@ fun DraftPage(
         }
     }
 }
+
+//@Preview(showBackground = true)
+//@Composable
+//fun PreviewDraftScreen() {
+//    DraftPage()
+//}

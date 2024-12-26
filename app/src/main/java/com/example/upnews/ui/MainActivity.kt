@@ -1,6 +1,6 @@
 package com.example.upnews.ui
 
-import MyAppNavigation
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -12,6 +12,7 @@ import androidx.navigation.compose.rememberNavController
 
 import com.example.upnews.data.local.UserPreferences
 import kotlinx.coroutines.flow.Flow
+import com.example.upnews.ui.MyAppNavigation
 
 class  MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
