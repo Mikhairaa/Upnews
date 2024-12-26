@@ -11,20 +11,13 @@ import com.example.app.view.upload.DraftPage
 import com.example.app.view.upload.FormPage
 import com.example.upnews.AllNewsScreen
 import com.example.upnews.ui.forgotPw.ForgotPw
-import com.example.upnews.AllNewsScreen
 import com.example.upnews.ui.screens.DoneScreen
 import com.example.upnews.ui.screens.OnProgressScreen
 import com.example.upnews.ui.screens.UpdateProfileScreen
 import com.example.upnews.ui.screens.RejectedScreen
-import com.example.app.view.upload.DraftPage
-import com.example.app.view.upload.FormPage
 import com.example.upnews.ui.homepage.HomePage
 import com.example.upnews.ui.login.LoginPage
 import com.example.upnews.ui.profile.ProfileScreen
-import com.example.upnews.ui.screens.DoneScreen
-import com.example.upnews.ui.screens.OnProgressScreen
-import com.example.upnews.ui.screens.RejectedScreen
-import com.example.upnews.ui.screens.UpdateProfileScreen
 import com.example.upnews.ui.signUp.SignupPage
 import kotlinx.coroutines.flow.Flow
 

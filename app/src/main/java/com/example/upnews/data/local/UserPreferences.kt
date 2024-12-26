@@ -30,6 +30,12 @@ class UserPreferences private constructor(private val dataStore: DataStore<Prefe
         return dataStore.data
             .map { preferences -> preferences[ACCESS_TOKEN] }
     }
+    suspend fun saveToken(token: String) {
+        dataStore.edit { preferences ->
+            preferences[ACCESS_TOKEN] = token
+        }
+        Log.d("UserPreferences", "Token saved: $token")
+    }
 
     suspend fun saveUser(user: User) {
         dataStore.edit { preferences ->
