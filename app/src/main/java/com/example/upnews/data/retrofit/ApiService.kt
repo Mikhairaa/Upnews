@@ -21,7 +21,6 @@ import com.example.upnews.data.response.SaveDraftResponse
 import com.example.upnews.data.response.UploadResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
@@ -32,7 +31,6 @@ import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Part
-import retrofit2.http.Path
 
 interface ApiService {
 
@@ -72,6 +70,7 @@ interface ApiService {
 
     @GET("berita/done")
     suspend fun getBeritaDone(@Header("Authorization") token: String): GetDoneResponse
+
     @DELETE("berita/delete/{id}")
     suspend fun deleteBerita(
         @Header("Authorization") token: String,
@@ -83,6 +82,7 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Body draftData: DataSave
     ): SaveDraftResponse
+
     @PATCH("user/updateProfil/{id}")
     suspend fun updateProfil(
         @Header("Authorization") token: String,
@@ -97,6 +97,7 @@ interface ApiService {
         @Part("data") data: RequestBody, // JSON data sebagai RequestBody
         @Part bukti: MultipartBody.Part? // File opsional
     ): UploadResponse
+
     @GET("user/profile")
     suspend fun getUserProfile(@Header("Authorization") token: String): GetProfileResponse
 
@@ -110,4 +111,7 @@ interface ApiService {
 
     @GET("berita/notifikasi") // Sesuaikan dengan endpoint yang sesuai
     suspend fun getNotifikasi(@Header("Authorization") token: String): NotifikasiResponse
+
+    @GET("berita/detail")
+    suspend fun getDetailBerita(@Header("Authorization") token: String): GetDraftResponse
 }
